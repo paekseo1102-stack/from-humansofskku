@@ -195,7 +195,7 @@ function 사진주소(s){ var m = /\/d\/([\w-]+)|[?&]id=([\w-]+)/.exec(s); retur
 
 function 시작(){
   Promise.all([탭읽기('부원'), 탭읽기('질문'), 탭읽기('답')]).then(function(표){
-    부원 = 표[0].filter(function(r){ return r.이름 }).map(function(r){ return {이름:r.이름, 나간:r['나간 분기']} })
+    부원 = 표[0].filter(function(r){ return r.이름 }).map(function(r){ return {이름:r.이름, 나간:r['나간 학기'] || r['나간 분기'] || ''} })   // 칸 이름이 '나간 학기'든 예전 '나간 분기'든 읽어요
     질문 = 표[1].filter(function(r){ return 숫자만(r.해) && 숫자만(r.월) && r.제목 }).map(function(r){
       return {달:달만들기(r), 제목:r.제목, 소개:r.소개 || '', 질문:r.질문 || '', 사진:사진주소(r.사진 || '')} })
     답 = 표[2].filter(function(r){ return r.이름 && (r['다듬은 글'] || r.원문) }).map(function(r){
