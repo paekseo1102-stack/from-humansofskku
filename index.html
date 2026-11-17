@@ -98,7 +98,7 @@ h1{white-space:nowrap;font-size:54px;font-weight:400;line-height:1;color:var(--o
   transition:transform .24s var(--out),opacity .2s var(--out)}
 /* 글이 길어 편지 안에서 스크롤이 생겨도 서명은 아래쪽에 붙어 있어요. 편지 높이는 줄 간격에 딱 맞춰서 글자가 반만 잘려 보이지 않게 해요. */
 .pile .letter{padding-bottom:0;max-height:calc(var(--P) + round(down, 80vh - var(--P), var(--L)))}
-.pile .sign{position:sticky;bottom:0;margin:var(--L) calc(-1*var(--S)) 0;padding:0 var(--S) var(--L);
+.pile .sign{position:sticky;bottom:0;margin:0 calc(-1*var(--S));padding:var(--L) var(--S) var(--L);   /* 위 한 줄은 본문과의 간격 */
   background:var(--paper) repeating-linear-gradient(to bottom,transparent 0 calc(var(--L) - 2px),var(--line) calc(var(--L) - 2px) var(--L))}
 .pile .letter:nth-last-child(2){transform:rotate(1.5deg) translateY(4px)}
 .pile .letter:nth-last-child(3){transform:rotate(-2deg) translateY(7px)}
