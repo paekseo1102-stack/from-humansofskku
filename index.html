@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From. 휴스꾸</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Pen+Script&display=swap">
+<style>
+/* ── 색·글꼴·움직임 값은 여기 한 곳에서만 정해요 ── */
+:root{
+  --wall:#EFEAE0; --paper:#F9F5EC; --ink:#3A332A; --line:#E6DDCC; --olive:#5B6B3A;
+  --tape:rgba(226,214,184,.85); --shadow:0 5px 12px rgba(58,51,42,.15);
+  --out:cubic-bezier(.23,1,.32,1); --inout:cubic-bezier(.77,0,.175,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--wall);color:var(--ink);font-family:'Gowun Batang',serif;word-break:keep-all;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:left}
+.pen{font-family:'Nanum Pen Script',cursive}
+main{max-width:1120px;margin:0 auto;padding:28px 20px 96px}
+
+/* ── 머리: 이름과 탭 ── */
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--line)}
+h1{font-size:54px;font-weight:400;line-height:1;color:var(--olive);padding-bottom:10px}
+.tabs{display:flex;gap:6px}
+.tabs a{font-size:28px;line-height:1;padding:11px 20px 9px;border-radius:10px 10px 0 0;opacity:.55}
+.tabs a.on{background:var(--line);opacity:1}
+
+/* ── 벽: 열두 달 ── */
+.wall{display:grid;grid-template-columns:repeat(4,1fr);gap:48px 40px;padding:52px 12px 0}
+.slot{display:block;width:100%;perspective:900px;transform:rotate(var(--r));
+  transition:transform .4s var(--out),opacity .3s var(--out);transition-delay:calc(var(--i)*70ms)}
+.wall.pre .slot.has{opacity:0;transform:translateY(-18px) scale(1.06) rotate(var(--r))}
+.flip{display:block;position:relative;aspect-ratio:3/4;transform-style:preserve-3d;transition:transform .5s var(--inout)}
+.slot.flipped .flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--shadow)}
+.front{background:#fff;padding:6%}
+.front img{display:block;width:100%;height:100%;object-fit:cover}
+.nophoto{background:var(--paper);display:flex;align-items:center;justify-content:center;text-align:center;font-size:34px;line-height:1.15}
+.back{transform:rotateY(180deg);background:var(--paper);padding:10% 9%;display:flex;flex-direction:column;justify-content:space-between;
+  font-size:clamp(13px,1.4vw,16px);line-height:1.65;font-weight:700}
+.back em{font-style:normal;font-weight:400;font-size:1.75em;line-height:1;color:var(--olive);align-self:flex-end}
+.tape{position:absolute;left:33%;top:-13px;width:34%;height:26px;background:var(--tape);transform:rotate(-3deg);
+  clip-path:polygon(0 8%,4% 0,8% 10%,12% 2%,88% 0,92% 9%,96% 1%,100% 8%,100% 92%,96% 100%,92% 91%,88% 100%,12% 98%,8% 90%,4% 100%,0 92%)}
+.cap{display:block;margin-top:14px;font-size:28px;line-height:1.1;text-align:center}
+.corners{display:block;aspect-ratio:3/4;--c:#DDD4C3;background-repeat:no-repeat;background-size:50% 50%;
+  background-image:linear-gradient(135deg,var(--c) 0 15px,transparent 15px),linear-gradient(225deg,var(--c) 0 15px,transparent 15px),
+    linear-gradient(45deg,var(--c) 0 15px,transparent 15px),linear-gradient(315deg,var(--c) 0 15px,transparent 15px);
+  background-position:top left,top right,bottom left,bottom right}
+.empty .cap{opacity:.4}
+
+/* ── 편지지: 질문·답장·읽기 화면이 모두 같은 종이를 써요 ── */
+.letter{--L:30px;--P:34px;display:block;background-color:var(--paper);box-shadow:var(--shadow);
+  font-size:17px;line-height:var(--L);padding:var(--P) 26px var(--L);white-space:pre-line;background-position:0 calc(var(--L)*.18);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 calc(var(--L) - 2px),var(--line) calc(var(--L) - 2px) var(--L))}
+.sign{display:block;text-align:right;font-family:'Nanum Pen Script',cursive;color:var(--olive);font-size:1.75em;line-height:var(--L);white-space:normal}
+
+/* ── 한 달(또는 한 사람)의 묶음 ── */
+.bundle{position:relative}
+.backlink{display:inline-block;font-size:28px;line-height:44px;margin-top:14px}
+.q-wrap{display:flex;justify-content:center;align-items:flex-end;margin:18px 0 118px}
+.q{--L:38px;--P:45px;width:min(560px,100%);font-size:21px;padding-left:38px;padding-right:38px}
+.q-photo{flex:none;width:190px;margin:0 0 -16px -46px;padding:10px;background:#fff;box-shadow:var(--shadow);transform:rotate(4deg);position:relative}
+.q-photo img{display:block;width:100%}
+.who{font-size:76px;font-weight:400;line-height:1;text-align:center;color:var(--olive);margin:26px 0 122px}
+
+.env{display:block;position:relative;width:260px;height:170px;margin:0 auto 40px;perspective:800px}
+.env span{position:absolute;inset:0}
+.env .eb{background:#D3C7AF}
+.env .ef{background:#E2D8C3;z-index:2;clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%)}
+.env .el{background:#D9CEB7;z-index:3;clip-path:polygon(0 0,100% 0,50% 58%);transform-origin:top;transition:transform .3s var(--out)}
+.env .et{z-index:4;inset:auto 0 16px 0;text-align:center;font-size:30px;line-height:1}
+.open .env .el{transform:rotateX(180deg)}
+
+.rwrap{height:0}
+.open .rwrap{height:auto}
+.replies{columns:260px;column-gap:30px}
+.reply{position:relative;z-index:5;width:100%;margin:0 0 30px;break-inside:avoid;transform:rotate(var(--r));
+  transition:transform .5s var(--out),opacity .3s var(--out);transition-delay:calc(var(--i)*45ms + 200ms)}
+.bundle:not(.open) .reply{transform:translate(var(--dx),var(--dy)) scale(.35) rotate(var(--r));opacity:0;pointer-events:none;transition-delay:0s}
+.reply .txt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:9;overflow:hidden}
+
+/* ── 사람 탭 ── */
+.oops{font-size:30px;text-align:center;padding:80px 0;opacity:.7}
+.people h2{font-size:30px;font-weight:400;opacity:.6;margin:44px 0 14px}
+.names{display:flex;flex-wrap:wrap;gap:16px 18px}
+.names a{font-size:38px;line-height:1;padding:12px 22px 10px;background:var(--paper);box-shadow:var(--shadow);transform:rotate(var(--r))}
+
+/* ── 읽기 화면: 회의에서 한 통씩 넘겨 읽어요 ── */
+.reader{position:fixed;inset:0;z-index:20;background:var(--wall);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;overflow:hidden}
+.reader[hidden]{display:none}
+.pile{display:grid;width:min(560px,100%)}
+.pile .letter{--L:38px;--P:45px;grid-area:1/1;position:relative;min-height:min(520px,62vh);max-height:80vh;overflow:auto;font-size:21px;padding-left:38px;padding-right:38px;background-attachment:local;
+  transition:transform .24s var(--out),opacity .2s var(--out)}
+.pile .letter:nth-last-child(2){transform:rotate(1.5deg) translateY(4px)}
+.pile .letter:nth-last-child(3){transform:rotate(-2deg) translateY(7px)}
+.pile .letter:nth-last-child(n+4){opacity:0}
+.pile .letter.out{transform:translateX(-125%) rotate(-10deg);z-index:5}
+.bar{display:flex;align-items:center;gap:6px;font-size:32px;line-height:1}
+.bar button{min-width:76px;min-height:48px;text-align:center}
+.bar span{min-width:90px;text-align:center;opacity:.6}
+
+/* ── 화면이 좁을 때 ── */
+@media (max-width:900px){.wall{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:600px){
+  main{padding:20px 16px 72px}
+  h1{font-size:42px}
+  .tabs a{font-size:25px;padding:10px 15px 8px}
+  .wall{grid-template-columns:repeat(2,1fr);gap:34px 22px;padding:38px 4px 0}
+  .cap{font-size:25px}
+  .back{font-size:13px;line-height:1.55;padding:9% 8%}
+  .q-wrap{flex-direction:column;align-items:center}
+  .q{--L:34px;--P:41px;font-size:19px;padding-left:24px;padding-right:24px}
+  .q-photo{width:140px;margin:-26px 6px 0 auto}
+  .who{font-size:62px}
+  .pile .letter{--L:36px;--P:43px;font-size:19.5px;padding-left:24px;padding-right:24px}
+}
+/* ── 움직임을 줄여 달라고 설정한 사람에게는 바로 바뀌게 해요 ── */
+@media (prefers-reduced-motion:reduce){
+  .slot,.flip,.reply,.env .el,.pile .letter{transition-duration:.01ms;transition-delay:0s}
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1 class="pen"><a href="#">From. 휴스꾸</a></h1>
+    <nav class="tabs pen" id="tabs"></nav>
+  </header>
+  <div id="view"></div>
+</main>
+
+<div class="reader" id="reader" hidden>
+  <div class="pile" id="pile"></div>
+  <div class="bar pen">
+    <button id="prev">이전</button><span id="count"></span><button id="next">다음</button><button id="close">닫기</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════ 1. 기록 ═══════════
+   기록은 구글 시트에서 읽어 와요. 시트를 옮기면, 새 시트 주소에서 /d/ 와 /edit 사이의 긴 글자를 아래 따옴표 안에 바꿔 넣어요. */
+var 시트 = '1B-EoFiNURCx78SbLPbOxQWRnLCqEM4z1clXy6PnMItk'
+var 부원 = [], 질문 = [], 답 = []   // 시트의 [부원] [질문] [답] 탭이 여기에 담겨요
+
+/* ═══════════ 2. 작은 도구 ═══════════ */
+var view = document.getElementById('view')
+var 기울기 = [-2.5, 1.5, -1, 3, -3, 2, 1, -2, 2.5, -1.5, 3, -0.5]   // 사진과 편지가 살짝씩 비뚤게 붙어요
+var 처음 = true        // 사진이 차례로 붙는 움직임은 처음 열 때 한 번만
+var 지금묶음 = []      // 읽기 화면이 넘겨 볼 답장들
+
+function 안전(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] }) }
+function 다듬기(s){ return 안전(String(s).trim().replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n')) }   // 빈 줄·공백 정리
+function 찾기(목록, 칸, 값){ return 목록.filter(function(x){ return x[칸] === 값 }) }
+// 사진 주소가 깨져도 페이지는 멀쩡하게: 벽에서는 제목 적힌 종이로 바꾸고, 질문 옆 사진은 그냥 빼요.
+function 사진없음(img){
+  var 틀 = img.parentNode
+  if (틀.classList.contains('q-photo')) 틀.remove()
+  else { 틀.classList.add('nophoto', 'pen'); img.replaceWith(img.alt) }
+}
+function 달이름(달){ return Number(달.slice(5)) + '월' }
+
+/* ═══════════ 2-1. 시트 읽기 ═══════════ */
+// 시트 한 탭을 줄과 칸으로 나눠요. 칸 안에 쉼표나 줄바꿈이 있어도 괜찮아요.
+function 표읽기(글){
+  var 줄들 = [], 줄 = [], 칸 = '', 따옴표안 = false
+  for (var i = 0; i < 글.length; i++){ var c = 글[i]
+    if (따옴표안){ if (c === '"'){ if (글[i+1] === '"'){ 칸 += '"'; i++ } else 따옴표안 = false } else 칸 += c }
+    else if (c === '"') 따옴표안 = true
+    else if (c === ','){ 줄.push(칸); 칸 = '' }
+    else if (c === '\n'){ 줄.push(칸); 줄들.push(줄); 줄 = []; 칸 = '' }
+    else if (c !== '\r') 칸 += c
+  }
+  줄.push(칸); 줄들.push(줄)
+  var 머리 = 줄들.shift().map(function(h){ return h.trim() })
+  return 줄들.map(function(r){ var o = {}; 머리.forEach(function(h, i){ o[h] = (r[i] || '').trim() }); return o })
+}
+function 탭읽기(이름){
+  return fetch('https://docs.google.com/spreadsheets/d/' + 시트 + '/gviz/tq?tqx=out:csv&headers=1&sheet=' + encodeURIComponent(이름))
+    .then(function(r){ if (!r.ok) throw new Error(이름); return r.text() }).then(표읽기)
+}
+function 숫자만(v){ return String(v).replace(/\D/g, '') }
+function 달만들기(r){ var 월 = Number(숫자만(r.월)); return 숫자만(r.해) + '-' + (월 < 10 ? '0' : '') + 월 }
+// 구글 드라이브 공유 링크는 사진만 보여 주는 주소로 바꿔요. 다른 주소는 그대로 써요.
+function 사진주소(s){ var m = /\/d\/([\w-]+)|[?&]id=([\w-]+)/.exec(s); return m ? 'https://drive.google.com/thumbnail?sz=w1200&id=' + (m[1] || m[2]) : s }
+
+function 시작(){
+  Promise.all([탭읽기('부원'), 탭읽기('질문'), 탭읽기('답')]).then(function(표){
+    부원 = 표[0].filter(function(r){ return r.이름 }).map(function(r){ return {이름:r.이름, 나간:r['나간 분기']} })
+    질문 = 표[1].filter(function(r){ return 숫자만(r.해) && 숫자만(r.월) && r.제목 }).map(function(r){
+      return {달:달만들기(r), 제목:r.제목, 소개:r.소개 || '', 질문:r.질문 || '', 사진:사진주소(r.사진 || '')} })
+    답 = 표[2].filter(function(r){ return r.이름 && (r['다듬은 글'] || r.원문) }).map(function(r){
+      return {달:달만들기(r), 이름:r.이름, 글:r['다듬은 글'] || r.원문} })   // 다듬은 글이 있으면 그걸, 없으면 원문을 보여 줘요
+    그리기()
+  }).catch(function(){
+    view.innerHTML = '<p class="oops pen">기록을 불러오지 못했어요. 잠시 뒤에 다시 열어 주세요.</p>'
+  })
+}
+
+/* ═══════════ 3. 화면 그리기 ═══════════ */
+function 탭(켜진){
+  var 해들 = 질문.map(function(q){ return q.달.slice(0,4) }).filter(function(y,i,a){ return a.indexOf(y) === i }).sort()
+  document.getElementById('tabs').innerHTML = 해들.concat('사람').map(function(t){
+    return '<a href="#' + t + '"' + (t === 켜진 ? ' class="on"' : '') + '>' + t + '</a>'
+  }).join('')
+  return 해들
+}
+
+function 벽(해){
+  var h = ''
+  for (var m = 1; m <= 12; m++){
+    var 달 = 해 + '-' + (m < 10 ? '0' : '') + m
+    var q = 찾기(질문, '달', 달)[0]
+    var 꾸밈 = ' style="--r:' + 기울기[m-1] + 'deg;--i:' + (m-1) + '"'
+    if (!q){ h += '<div class="slot empty"' + 꾸밈 + '><span class="corners"></span><span class="cap pen">' + m + '월</span></div>'; continue }
+    h += '<button class="slot has" data-go="' + 달 + '"' + 꾸밈 + '>'
+       +   '<span class="flip">'
+       +     '<span class="face front' + (q.사진 ? '' : ' nophoto pen') + '"><span class="tape"></span>' + (q.사진 ? '<img src="' + 안전(q.사진) + '" alt="' + 안전(q.제목) + '" onerror="사진없음(this)">' : 안전(q.제목)) + '</span>'
+       +     '<span class="face back"><span>' + 안전(q.질문) + '</span><em class="pen">답장 ' + 찾기(답, '달', 달).length + '통 읽기</em></span>'
+       +   '</span>'
+       +   '<span class="cap pen">' + m + '월 ' + 안전(q.제목) + '</span>'
+       + '</button>'
+  }
+  view.innerHTML = '<div class="wall' + (처음 ? ' pre' : '') + '">' + h + '</div>'
+  if (처음){ 처음 = false; view.offsetWidth; view.firstChild.classList.remove('pre') }
+}
+
+function 사람들(){
+  function 줄(목록){ return '<div class="names pen">' + 목록.map(function(p, i){
+    return '<a href="#사람/' + 안전(p.이름) + '" style="--r:' + 기울기[i % 12] / 2 + 'deg">' + 안전(p.이름) + '</a>' }).join('') + '</div>' }
+  var 지금 = 부원.filter(function(p){ return !p.나간 }), 지난 = 부원.filter(function(p){ return p.나간 })
+  view.innerHTML = '<div class="people"><h2 class="pen">지금 부원</h2>' + 줄(지금)
+                 + (지난.length ? '<h2 class="pen">지난 부원</h2>' + 줄(지난) : '') + '</div>'
+}
+
+// 한 달의 답장 묶음, 또는 한 사람의 답장 묶음. 모양은 같고 머리만 달라요.
+function 묶음(머리, 목록, 꼬리, 돌아갈곳){
+  지금묶음 = 목록.map(function(a){ return {글:a.글, 꼬리:꼬리(a)} })
+  view.innerHTML = '<div class="bundle">'
+    + '<a class="backlink pen" href="#' + 돌아갈곳 + '">돌아가기</a>' + 머리
+    + '<button class="env"><span class="eb"></span><span class="ef"></span><span class="el"></span><span class="et pen">답장 ' + 목록.length + '통</span></button>'
+    + '<div class="rwrap"><div class="replies">' + 지금묶음.map(function(a, i){
+        return '<button class="letter reply" data-n="' + i + '" style="--r:' + 기울기[i % 12] / 2.5 + 'deg;--i:' + i + '">'
+             + '<span class="txt">' + 다듬기(a.글) + '</span><span class="sign">' + 안전(a.꼬리) + '</span></button>' }).join('')
+    + '</div></div></div>'
+  // 답장이 봉투 자리에서 나오도록, 봉투까지의 거리를 편지마다 적어 둬요.
+  var 봉투 = view.querySelector('.env'), x = 봉투.offsetLeft + 봉투.offsetWidth/2, y = 봉투.offsetTop + 봉투.offsetHeight/2
+  view.querySelectorAll('.reply').forEach(function(el){
+    el.style.setProperty('--dx', (x - el.offsetLeft - el.offsetWidth/2) + 'px')
+    el.style.setProperty('--dy', (y - el.offsetTop - el.offsetHeight/2) + 'px')
+  })
+  setTimeout(function(){ var b = view.querySelector('.bundle'); if (b) b.classList.add('open') }, 450)
+}
+
+function 그리기(){
+  질문.sort(function(a, b){ return a.달 < b.달 ? -1 : 1 })
+  var 주소 = decodeURIComponent(location.hash.slice(1))
+  var q = 찾기(질문, '달', 주소)[0]
+  닫기(); window.scrollTo(0, 0)
+  if (q){
+    탭(q.달.slice(0,4))
+    묶음('<div class="q-wrap"><article class="letter q">To. 휴스꾸 부원들께\n\n' + 다듬기(q.소개) + '\n<b>' + 안전(q.질문) + '</b><span class="sign">From. 휴스꾸</span></article>'
+        + (q.사진 ? '<div class="q-photo"><span class="tape"></span><img src="' + 안전(q.사진) + '" alt="" onerror="사진없음(this)"></div>' : '') + '</div>',
+        찾기(답, '달', q.달), function(a){ return 'From. ' + a.이름 }, q.달.slice(0,4))
+  } else if (주소.indexOf('사람/') === 0){
+    var 이름 = 주소.slice(3)
+    탭('사람')
+    묶음('<h2 class="who pen">' + 안전(이름) + '</h2>', 찾기(답, '이름', 이름),
+        function(a){ var q = 찾기(질문, '달', a.달)[0]; return a.달.slice(0,4) + '년 ' + 달이름(a.달) + (q ? ' ' + q.제목 : '') }, '사람')
+  } else if (주소 === '사람'){
+    탭('사람'); 사람들()
+  } else {
+    var 해들 = 탭(/^\d{4}$/.test(주소) ? 주소 : ''), 해 = 해들.indexOf(주소) > -1 ? 주소 : 해들[해들.length-1]
+    탭(해); 벽(해)
+  }
+}
+
+/* ═══════════ 4. 읽기 화면 ═══════════ */
+var reader = document.getElementById('reader'), pile = document.getElementById('pile')
+function 읽기(n){
+  var 수 = 지금묶음.length, h = ''
+  for (var k = 수 - 1; k >= 0; k--){ var i = (n + k) % 수   // 맨 위(마지막)에 n번째가 오게 쌓아요
+    h += '<div class="letter" data-n="' + i + '">' + 다듬기(지금묶음[i].글) + '<span class="sign">' + 안전(지금묶음[i].꼬리) + '</span></div>' }
+  pile.innerHTML = h; reader.hidden = false; 몇번째()
+}
+function 몇번째(){ document.getElementById('count').textContent = (Number(pile.lastElementChild.dataset.n) + 1) + ' / ' + 지금묶음.length }
+function 다음(){   // 맨 위 장을 옆으로 빼서 맨 뒤로 보내요
+  var c = pile.lastElementChild; c.classList.add('out'); pile.prepend(c); 몇번째()
+  setTimeout(function(){ c.classList.remove('out') }, 240)
+}
+function 이전(){   // 맨 뒤 장을 옆에서 다시 가져와요
+  var c = pile.firstElementChild; c.style.transition = 'none'; c.classList.add('out'); pile.append(c)
+  c.offsetWidth; c.style.transition = ''; c.classList.remove('out'); 몇번째()
+}
+function 닫기(){ reader.hidden = true }
+
+/* ═══════════ 5. 누르면 일어나는 일 ═══════════ */
+view.onclick = function(e){
+  var 사진 = e.target.closest('.slot.has'), 편지 = e.target.closest('.reply')
+  if (사진){   // 한 번 누르면 뒤집히고, 뒤집힌 걸 또 누르면 그달로 들어가요
+    if (사진.classList.contains('flipped')) location.hash = 사진.dataset.go
+    else { var 전 = view.querySelector('.flipped'); if (전) 전.classList.remove('flipped'); 사진.classList.add('flipped') }
+  }
+  else if (e.target.closest('.env')) view.querySelector('.bundle').classList.toggle('open')
+  else if (편지) 읽기(Number(편지.dataset.n))
+}
+document.getElementById('next').onclick = 다음
+document.getElementById('prev').onclick = 이전
+document.getElementById('close').onclick = 닫기
+pile.onclick = 다음
+document.onkeydown = function(e){
+  if (reader.hidden) return
+  if (e.key === 'ArrowRight' || e.key === ' ') 다음()
+  if (e.key === 'ArrowLeft') 이전()
+  if (e.key === 'Escape') 닫기()
+}
+window.onhashchange = 그리기
+시작()
+</script>
+</body>
+</html>
