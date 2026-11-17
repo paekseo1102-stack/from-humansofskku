@@ -43,7 +43,7 @@ h1{white-space:nowrap;user-select:none;-webkit-user-select:none;touch-action:man
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--shadow)}
 .front{background:#fff;padding:6%}
 .front img{display:block;width:100%;height:100%;object-fit:cover}
-.nophoto{background:var(--paper);display:flex;align-items:center;justify-content:center;text-align:center;font-size:34px;line-height:1.15}
+.nophoto{background:var(--paper);display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(30px,3.2vw,44px);line-height:1.15}
 .back{overflow-wrap:break-word;transform:rotateY(180deg);background:var(--paper);padding:10% 9%;display:flex;flex-direction:column;justify-content:space-between;
   font-size:clamp(13px,1.4vw,16px);line-height:1.65;font-weight:700}
 .back span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:7;overflow:hidden}
@@ -261,11 +261,12 @@ function 탭(켜진){
 }
 
 function 벽(해){
-  var h = ''
+  var h = '', 첫달 = 질문.length ? 질문[0].달 : '', 순서 = 0   // 질문은 달 순서로 줄 서 있어요. 맨 앞이 기록을 시작한 달이에요
   for (var m = 1; m <= 12; m++){
     var 달 = 해 + '-' + (m < 10 ? '0' : '') + m
+    if (달 < 첫달) continue   // 기록을 시작하기 전의 달은 빈 칸으로도 안 그려요 (예: 5월에 시작했으면 1~4월은 없음)
     var q = 찾기(질문, '달', 달)[0]
-    var 꾸밈 = ' style="--r:' + 기울기[m-1] + 'deg;--i:' + (m-1) + '"'
+    var 꾸밈 = ' style="--r:' + 기울기[m-1] + 'deg;--i:' + (순서++) + '"'
     if (!q){ h += '<div class="slot empty"' + 꾸밈 + '><span class="corners"></span><span class="cap pen">' + m + '월</span></div>'; continue }
     h += '<div class="slot has" tabindex="0"' + 꾸밈 + '>'
        +   '<span class="flip">'
